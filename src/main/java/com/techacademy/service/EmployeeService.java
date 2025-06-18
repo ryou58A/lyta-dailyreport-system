@@ -65,7 +65,7 @@ public class EmployeeService {
         existingEmployee.setName(employee.getName());
         existingEmployee.setRole(employee.getRole());
         existingEmployee.setUpdatedAt(LocalDateTime.now());
-        employeeRepository.save(employee);
+        employeeRepository.save(existingEmployee);
         return ErrorKinds.SUCCESS;
     }
 
