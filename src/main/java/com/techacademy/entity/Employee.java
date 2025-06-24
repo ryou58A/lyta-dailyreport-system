@@ -2,10 +2,13 @@
 package com.techacademy.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.validator.constraints.Length;
 
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -35,6 +38,9 @@ public class Employee {
         }
     }
 
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    private List<Report> reportList;
+
     // ID
     @Id
     @Column(length = 10)
@@ -49,7 +55,7 @@ public class Employee {
     private String name;
 
     // 権限
-    @Column(columnDefinition="VARCHAR(10)", nullable = false)
+    @Column(columnDefinition = "VARCHAR(10)", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -58,7 +64,7 @@ public class Employee {
     private String password;
 
     // 削除フラグ(論理削除を行うため)
-    @Column(columnDefinition="TINYINT", nullable = false)
+    @Column(columnDefinition = "TINYINT", nullable = false)
     private boolean deleteFlg;
 
     // 登録日時
