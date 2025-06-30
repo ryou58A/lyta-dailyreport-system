@@ -41,15 +41,40 @@ public class ReportService {
         return ErrorKinds.SUCCESS;
     }
 
+    // 日報更新
+    @Transactional
+    public ErrorKinds update(Report report) {
+        Report existingReport = findByCode(report.getId());
+
+        existingReport.setReportDate(report.getReportDate());
+        existingReport.setTitle(report.getTitle());
+        existingReport.setContent(report.getContent());
+        existingReport.setUpdatedAt(LocalDateTime.now());
+        reportRepository.save(existingReport);
+        return ErrorKinds.SUCCESS;
+    }
+
+    // 日報削除
+    @Transactional
+    public ErrorKinds delete(Integer id) {
+
+        Report report = findByCode(id);
+        LocalDateTime now = LocalDateTime.now();
+        report.setUpdatedAt(now);
+        report.setDeleteFlg(true);
+
+        return ErrorKinds.SUCCESS;
+    }
+
     // 日報一覧表示処理
     public List<Report> findAll() {
         return reportRepository.findAll();
     }
 
     // 1件を検索
-    public Report findByCode(Integer code) {
+    public Report findByCode(Integer id) {
         // findByIdで検索
-        Optional<Report> option = reportRepository.findById(code);
+        Optional<Report> option = reportRepository.findById(id);
         // 取得できなかった場合はnullを返す
         Report report = option.orElse(null);
         return report;

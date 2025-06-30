@@ -9,7 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -39,6 +39,38 @@ public class ReportController {
         model.addAttribute("reportList", reportService.findAll());
 
         return "reports/list";
+    }
+
+    // 日報詳細画面
+    @GetMapping(value = "/{id}/")
+    public String detail(@PathVariable("id") Integer id, Model model) {
+
+        model.addAttribute("report", reportService.findByCode(id));
+        return "reports/detail";
+    }
+    
+ // 日報更新画面
+    @GetMapping(value = "/{id}/update")
+    public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
+
+        model.addAttribute("report", reportService.findByCode(id));
+        return "reports/update";
+    }
+
+    // 日報更新処理
+    @PostMapping(value = "/{id}/update")
+    public String update(@PathVariable("id") Integer id, @Validated Report report, BindingResult res,
+            Model model, @AuthenticationPrincipal UserDetail userDetail) {
+        Report existingReport = reportService.findByCode(id);
+        report.setId(existingReport.getId());
+        report.setEmployee(existingReport.getEmployee());
+
+        if (res.hasErrors()) {
+            model.addAttribute("report", report);
+            return "reports/update";
+        }
+        reportService.update(report);
+        return "redirect:/reports";
     }
 
     // 日報新規登録画面
