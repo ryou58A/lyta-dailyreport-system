@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.techacademy.constants.ErrorKinds;
+import com.techacademy.entity.Employee;
 import com.techacademy.entity.Report;
 import com.techacademy.repository.ReportRepository;
 
@@ -69,6 +70,11 @@ public class ReportService {
     // 日報一覧表示処理
     public List<Report> findAll() {
         return reportRepository.findAll();
+    }
+    
+    // 日報一覧表示処理 一般ユーザー
+    public List<Report> findByEmployee(Employee employee) {
+        return reportRepository.findByEmployee(employee);
     }
 
     // 1件を検索
