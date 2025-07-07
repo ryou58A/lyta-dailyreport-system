@@ -45,13 +45,20 @@ public class ReportService {
     // 日報更新
     @Transactional
     public ErrorKinds update(Report report) {
-        Report existingReport = findByCode(report.getId());
+        Report currentReport = findByCode(report.getId());
+        
+        Optional<Report> existingReport = reportRepository
+                .findByEmployeeCodeAndReportDate(report.getEmployee().getCode(), report.getReportDate());
+        
+        if (existingReport.isPresent() && !existingReport.get().getId().equals(report.getId())) {
+            return ErrorKinds.DATECHECK_ERROR;
+        }
 
-        existingReport.setReportDate(report.getReportDate());
-        existingReport.setTitle(report.getTitle());
-        existingReport.setContent(report.getContent());
-        existingReport.setUpdatedAt(LocalDateTime.now());
-        reportRepository.save(existingReport);
+        currentReport.setReportDate(report.getReportDate());
+        currentReport.setTitle(report.getTitle());
+        currentReport.setContent(report.getContent());
+        currentReport.setUpdatedAt(LocalDateTime.now());
+        reportRepository.save(currentReport);
         return ErrorKinds.SUCCESS;
     }
 

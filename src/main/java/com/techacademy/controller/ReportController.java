@@ -70,14 +70,22 @@ public class ReportController {
     @PostMapping(value = "/{id}/update")
     public String update(@PathVariable("id") Integer id, @Validated Report report, BindingResult res,
             Model model, @AuthenticationPrincipal UserDetail userDetail) {
-        Report existingReport = reportService.findByCode(id);
-        report.setId(existingReport.getId());
-        report.setEmployee(existingReport.getEmployee());
+        Report currentReport = reportService.findByCode(id);
+        report.setId(currentReport.getId());
+        report.setEmployee(currentReport.getEmployee());
 
         if (res.hasErrors()) {
             model.addAttribute("report", report);
             return "reports/update";
         }
+        
+        ErrorKinds result = reportService.update(report);
+        if (ErrorMessage.contains(result)) {
+            model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+            model.addAttribute("report", report);
+            return "reports/update";
+        }
+        
         reportService.update(report);
         return "redirect:/reports";
     }
